@@ -1,0 +1,31 @@
+Nombre d'auteur:{{tabauthor|length}}
+{% if tabauthor | length>0 and tabauthor is defined %}
+<table border="3">
+    <tr>
+        <td>id</td>
+        <td>image</td>
+        <td>username</td>
+        <td>email</td>
+        <td>nbr-books</td>
+        <td>action</td>
+    </tr>
+    {% set s=0 %}
+{% for a in tabauthor %}
+    <tr>
+        <td>{{a.id}}</td>
+        <td> <img src="{{asset(a.picture)}}" alt="img1" width="100" height="100"> </td>
+        <td>{{a.username |upper}}</td>
+        <td>{{a.email}}</td>
+        <td>{{a.nb_books}}</td>
+        <td><a href="{{path('app_author')}}">Details</a></td>
+        <td><a href="{{path('app_detailauthor',{'id':a.id})}}">Details param</a></td>
+    </tr>
+    {% set s=s+a.nb_books %}
+    {% endfor %}
+
+
+</table>
+{% else %}
+is emty
+{% endif %}
+{# NOMBRE de livre:{{s}} #}
