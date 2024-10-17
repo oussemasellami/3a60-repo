@@ -1,0 +1,21 @@
+<table border="3">
+    <tr>
+        <td>id</td>
+        <td>title</td>
+        <td>publicationdate</td>
+        <td>status</td>
+        <td>ecrivain</td>
+    </tr>
+    {% for i in tabbook %}
+    <tr>
+        <td>{{i.id}}</td>
+        <td>{{i.title}}</td>
+        <td>{{i.publicationdate |date}}</td>
+        <td>{{i.enebled ? 'yes' : 'no'}}</td>
+        <td>{{i.author.username}}</td>
+        <td><a href="{{path('app_deletebook',{'id':i.id})}}">delete</a></td>
+        
+        
+    </tr>
+    {% endfor %}
+</table>

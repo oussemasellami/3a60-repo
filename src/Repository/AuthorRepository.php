@@ -40,4 +40,39 @@ class AuthorRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function orderbyusername(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.username', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function usernameorderby(): array
+    {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT a FROM App\Entity\Author a ORDER BY a.username ASC ');
+        return $query->getResult();
+    }
+
+    public function FILTERusername(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.username LIKE :name')
+            ->setParameter('name','t%')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function rechercheusername($name): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.username LIKE :name')
+            ->setParameter('name',$name)
+            ->getQuery()
+            ->getResult();
+    }
 }

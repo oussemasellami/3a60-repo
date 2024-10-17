@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\AuthorRepository;
 use App\Entity\Author;
 use App\Form\AuthorType;
+use App\Form\RechercheusernameType;
 use Doctrine\Persistence\ManagerRegistry;
 
 class AuthorsController extends AbstractController
@@ -22,74 +23,88 @@ class AuthorsController extends AbstractController
     }
 
     #[Route('/showauthors', name: 'app_showauthors')]
-    public function showauthors( AuthorRepository $repoauthor): Response
+    public function showauthors(AuthorRepository $repoauthor, Request $req): Response
     {
-             
-       $authors=$repoauthor->findAll();
-        
+        $authors = $repoauthor->findAll();
+        $f = $this->createForm(RechercheusernameType::class);
+        $f->handleRequest($req);
+
+        if ($f->isSubmitted()) {
+            $data = $f->get('search')->getData();
+            $author = $repoauthor->rechercheusername($data);
+            return $this->render('authors/showauthors.html.twig', [
+
+                //hazem hadda +5
+                'tabauthors' => $author,
+                'recherche' => $f->createView()
+            ]);
+        }
+        //$authors=$repoauthor->findAll();
+        //$authors=$repoauthor->usernameorderby();
+        //   $authors=$repoauthor->FILTERusername();
         return $this->render('authors/showauthors.html.twig', [
             'tabauthors' => $authors,
+            'recherche' => $f->createView()
         ]);
     }
 
     #[Route('/addauthors', name: 'app_addauthors')]
     public function addauthors(ManagerRegistry $m): Response
     {
-       $em=$m->getManager();
-        $author=new Author();
+        $em = $m->getManager();
+        $author = new Author();
         $author->setUsername("3a60");
         $author->setEmail("3a60@esprit.tn");
         $em->persist($author);
         $em->flush();
-        
+
         return $this->redirectToRoute('app_showauthors');
     }
 
 
     #[Route('/addformauthors', name: 'app_addformauthors')]
-    public function addformauthors(ManagerRegistry $m,Request $req): Response
+    public function addformauthors(ManagerRegistry $m, Request $req): Response
     {
-        $em=$m->getManager();
-        $author=new Author();
-        $form=$this->createForm(AuthorType::class,$author);
+        $em = $m->getManager();
+        $author = new Author();
+        $form = $this->createForm(AuthorType::class, $author);
         $form->handleRequest($req);
-        if($form->isSubmitted() && $form->isValid()){
-        $em->persist($author);
-        $em->flush();
-        return $this->redirectToRoute('app_showauthors');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($author);
+            $em->flush();
+            return $this->redirectToRoute('app_showauthors');
         }
         return $this->render('authors/addformauthors.html.twig', [
             'addform' => $form,
         ]);
     }
 
-    
+
     #[Route('/updateformauthors/{id}', name: 'app_updateformauthors')]
-    public function updateformauthors(ManagerRegistry $m,Request $req,$id,AuthorRepository $rep): Response
+    public function updateformauthors(ManagerRegistry $m, Request $req, $id, AuthorRepository $rep): Response
     {
-        $em=$m->getManager();
-        $author=$rep->find($id);
-        $form=$this->createForm(AuthorType::class,$author);
+        $em = $m->getManager();
+        $author = $rep->find($id);
+        $form = $this->createForm(AuthorType::class, $author);
         $form->handleRequest($req);
-        if($form->isSubmitted() && $form->isValid()){
-        $em->persist($author);
-        $em->flush();
-        return $this->redirectToRoute('app_showauthors');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($author);
+            $em->flush();
+            return $this->redirectToRoute('app_showauthors');
         }
         return $this->render('authors/addformauthors.html.twig', [
             'addform' => $form,
         ]);
     }
 
-       
+
     #[Route('/deleteauthors/{id}', name: 'app_deleteauthors')]
-    public function deleteauthors(ManagerRegistry $m,Request $req,$id,AuthorRepository $rep): Response
+    public function deleteauthors(ManagerRegistry $m, Request $req, $id, AuthorRepository $rep): Response
     {
-        $em=$m->getManager();
-        $author=$rep->find($id); 
+        $em = $m->getManager();
+        $author = $rep->find($id);
         $em->remove($author);
         $em->flush();
         return $this->redirectToRoute('app_showauthors');
-      
     }
 }

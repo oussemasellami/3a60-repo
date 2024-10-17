@@ -23,8 +23,12 @@ class Book
     #[ORM\Column]
     private ?bool $enebled = null;
 
-    #[ORM\ManyToOne(inversedBy: 'book')]
+    #[ORM\ManyToOne(inversedBy: 'books')]
     private ?Author $author = null;
+
+
+
+ 
 
     public function getId(): ?int
     {
@@ -78,4 +82,8 @@ class Book
 
         return $this;
     }
+
+    
+ 
+
 }
